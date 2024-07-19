@@ -8,7 +8,7 @@ export default function Join({ setChatVisibility, setSocket }) {
     const username = usernameRef.current.value
     if (!username.trim()) return; // Verifica se o nome de usuário não está vazio
 
-    const http = 'https://api-alerta-surdo.vercel.app'
+    const http = 'https://api-alerta-surdo-production.up.railway.app/'
     const socket = await io.connect(http)
     socket.emit('set_username', username)
     setSocket(socket)
