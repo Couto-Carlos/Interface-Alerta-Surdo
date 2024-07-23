@@ -1,0 +1,42 @@
+input {
+    margin-right: 10px;
+}
+.alert-options {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+  
+  /* Estilos para desktop */
+  @media (min-width: 601px) {
+    .alert-options {
+      gap: 20px; /* Espaçamento entre as imagens */
+    }
+  
+    .alert-button {
+      width: 150px;
+      height: 150px;
+    }
+  }
+  
+  /* Estilos para dispositivos móveis */
+  @media (max-width: 600px) {
+    .alert-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* 2 colunas */
+      gap: 10px;
+      justify-items: center;
+    }
+  
+    .alert-button {
+      width: 100px;
+      height: 100px;
+    }
+  
+    /* Centralizar a última imagem na última linha */
+    .alert-options > button:nth-child(5) {
+      grid-column: span 2;
+      justify-self: center;
+    }
+  }
