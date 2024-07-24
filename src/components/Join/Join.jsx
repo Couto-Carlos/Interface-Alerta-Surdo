@@ -9,47 +9,91 @@ import acidenteImg from '../../images/acidente.jpg'; // Caminho para a imagem de
 
 
 export default function Join({ setChatVisibility, setSocket }) {
-  const usernameRef = useRef(null);
-  const [alertId, setAlertId] = useState(null);
+  const usernameRef = useRef(null); // Inicializa useRef com null
+  const [selectedAlertId, setSelectedAlertId] = useState(null);
+
+  const handleAlertSelection = (alertId) => {
+    setSelectedAlertId(alertId);
+  };
 
   const handleSubmit = async () => {
     const username = usernameRef.current.value;
-    if (!username.trim() || alertId === null) return;
+    if (!username.trim()) return; // Verifica se o nome de usuário não está vazio
 
     const http = 'https://api-alerta-surdo-production.up.railway.app/';
     const socket = await io.connect(http);
     socket.emit('set_username', username);
-    socket.emit('set_alertid', alertId);
-    setSocket({ socket, alertId });
+    socket.emit('set_alertid', selectedAlertId);
+
+    getLocationLink((locationLink, error) => {
+      if (error) {
+        console.error('Failed to get location:', error);
+        socket.emit('message', { text: getMessageText(selectedAlertId), location: null, alertId: selectedAlertId });
+      } else {
+        socket.emit('message', { text: getMessageText(selectedAlertId), location: locationLink, alertId: selectedAlertId });
+      }
+    });
+
+    setSocket(socket);
     setChatVisibility(true);
+  };
+
+  const getMessageText = (alertId) => {
+    switch (alertId) {
+      case 1:
+        return 'APP Alerta Surdo: Atenção situação policial reportado. Por favor direcionar uma equipe policial ao local indicado no mapa.';
+      case 2:
+        return 'APP Alerta Surdo: Atenção incêndio reportado. Por favor enviar os bombeiros ao local indicado no mapa.';
+      case 3:
+        return 'APP Alerta Surdo: Atenção acidente de trânsito reportado. Por favor direcionar o serviço de emergência ao local indicado no mapa.';
+      case 4:
+        return 'APP Alerta Surdo: Atenção violência doméstica reportada. Por favor direcionar uma equipe policial ao local indicado no mapa.';
+      case 5:
+        return 'APP Alerta Surdo: Atenção enchente reportada. Por favor direcionar uma equipe da Defesa Civil ao local indicado no mapa para o auxílio.';
+      default:
+        return 'APP Alerta Surdo: Alerta genérico.';
+    }
+  };
+
+  const getLocationLink = (callback) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const locationLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+          callback(locationLink);
+        },
+        (error) => {
+          console.error(`ERROR(${error.code}): ${error.message}`);
+          callback(null, error);
+        }
+      );
+    } else {
+      const error = new Error('Geolocation is not supported by this browser.');
+      callback(null, error);
+    }
   };
 
   return (
     <div>
-      <h1>Join</h1>
-      <input
-        type='text'
-        placeholder='Nome de usuário'
-        ref={usernameRef}
-      />
-     <div className="alert-options">
-        <button onClick={() => setAlertId(1)}>
-          <img src={policiaImg} alt="Polícia" className="alert-button" />
-        </button>
-        <button onClick={() => setAlertId(2)}>
-          <img src={enchenteImg} alt="Enchente" className="alert-button" />
-        </button>
-        <button onClick={() => setAlertId(3)}>
-          <img src={incendioImg} alt="Incêndio" className="alert-button" />
-        </button>
-        <button onClick={() => setAlertId(4)}>
-          <img src={violenciaDomesticaImg} alt="Violência Doméstica" className="alert-button" />
-        </button>
-        <button onClick={() => setAlertId(5)}>
-          <img src={acidenteImg} alt="Acidente" className="alert-button" />
-        </button>
+      <h1>Alerta Surdo</h1>
+      <div className="image-grid">
+        <img src={policiaImg} alt="Polícia" onClick={() => handleAlertSelection(1)} />
+        <img src={incendioImg} alt="Incêndio" onClick={() => handleAlertSelection(2)} />
+        <img src={acidenteImg} alt="Acidente" onClick={() => handleAlertSelection(3)} />
+        <img src={violenciaDomesticaImg} alt="Violência Doméstica" onClick={() => handleAlertSelection(4)} />
+        <img src={enchenteImg} alt="Enchente" onClick={() => handleAlertSelection(5)} />
       </div>
-      <button onClick={handleSubmit}>Entrar</button>
+      {selectedAlertId && (
+        <div className="user-input">
+          <input
+            type='text'
+            placeholder='Nome de usuário'
+            ref={usernameRef} // Associa o input ao useRef
+          />
+          <button onClick={handleSubmit}>Entrar</button>
+        </div>
+      )}
     </div>
   );
 }

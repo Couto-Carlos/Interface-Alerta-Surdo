@@ -1,33 +1,29 @@
+/* Chat.css */
+
 table {
-    width: 100%;
-    border-collapse: collapse; /* Remove o espaçamento entre as bordas das células */
-    margin: 20px 0; /* Espaço acima e abaixo da tabela */
-  }
-  
-  th, td {
-    border: 1px solid #ddd; /* Cor da borda das células */
-    padding: 10px; /* Espaço interno das células */
-    text-align: left; /* Alinhamento do texto */
-  }
-  
-  th {
-    background-color: #3e3e3e; /* Cor de fundo dos cabeçalhos */
-  }
-  
-  td {
-    word-break: break-word; /* Quebra de palavras longas */
-    min-width: 200px; /* Largura mínima das células para garantir a quebra de linha */
-  }
-  
-  /* Opcional: ajuste a largura das colunas */
-  th:nth-child(1), td:nth-child(1) {
-    width: 20%; /* Largura da coluna Autor */
-  }
-  
-  th:nth-child(2), td:nth-child(2) {
-    width: 50%; /* Largura da coluna Mensagem */
-  }
-  
-  th:nth-child(3), td:nth-child(3) {
-    width: 30%; /* Largura da coluna Localização */
-  }
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 10px; /* Adiciona espaçamento entre as colunas */
+}
+
+th, td {
+  border: 1px solid #dddddd74;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f213;
+}
+
+td {
+  white-space: pre-line; /* Preserve quebras de linha nas mensagens de alerta */
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f96c;
+}
+
+table, th, td {
+  margin: 20px 0;
+}

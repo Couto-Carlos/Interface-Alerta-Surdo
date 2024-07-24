@@ -5,15 +5,12 @@ import Chat from './components/Chat/Chat';
 
 function App() {
   const [chatVisibility, setChatVisibility] = useState(false);
-  const [socketData, setSocketData] = useState({ socket: null, alertId: null });
+  const [choiceVisibility, setChoiceVisibility] = useState(false);
+  const [socket, setSocket] = useState(null);
 
   return (
     <div className='App'>
-      {
-        chatVisibility ? 
-          <Chat socket={socketData.socket} alertId={socketData.alertId} /> : 
-          <Join setSocket={setSocketData} setChatVisibility={setChatVisibility} />
-      }
+      {chatVisibility ? <Chat socket={socket} /> : <Join setSocket={setSocket} setChatVisibility={setChatVisibility} />}
     </div>
   );
 }
