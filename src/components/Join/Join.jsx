@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import './Join.css';
 import io from 'socket.io-client';
-import policiaImg from '../../images/policia.jpg'; // Caminho para a imagem de polícia
+import policiaImg from '../../images/policia.jpeg'; // Caminho para a imagem de polícia
 import enchenteImg from '../../images/enchente.jpg'; // Caminho para a imagem de enchente
 import incendioImg from '../../images/incendio.jpg'; // Caminho para a imagem de incêndio
 import violenciaDomesticaImg from '../../images/violenciaDomestica.jpg'; // Caminho para a imagem de violência doméstica
