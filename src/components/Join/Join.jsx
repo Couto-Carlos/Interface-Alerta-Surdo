@@ -6,9 +6,10 @@ import enchenteImg from '../../images/enchente.jpg'; // Caminho para a imagem de
 import incendioImg from '../../images/incendio.jpg'; // Caminho para a imagem de incêndio
 import violenciaDomesticaImg from '../../images/violenciaDomestica.jpg'; // Caminho para a imagem de violência doméstica
 import acidenteImg from '../../images/acidente.jpg'; // Caminho para a imagem de acidente
+import ambulanciaIcon from '../../images/ambulancia.png';
 
 
-export default function Join({ setChatVisibility, setSocket }) {
+export default function Join({  setSocket, setChatVisibility, setAwaitVisibility,setAlertId }) {
   const usernameRef = useRef(null); // Inicializa useRef com null
   const [selectedAlertId, setSelectedAlertId] = useState(null);
 
@@ -16,14 +17,20 @@ export default function Join({ setChatVisibility, setSocket }) {
     setSelectedAlertId(alertId);
   };
 
+  const OpenConnection = async () => {
+    const http = 'https://api-alerta-surdo-production.up.railway.app/';
+    const socket = await io.connect(http);
+    setSocket(socket);
+    setChatVisibility(true);
+  }
+
+
   const handleSubmit = async () => {
-    const username = usernameRef.current.value;
-    if (!username.trim()) return; // Verifica se o nome de usuário não está vazio
 
     const http = 'https://api-alerta-surdo-production.up.railway.app/';
     const socket = await io.connect(http);
-    socket.emit('set_username', username);
     socket.emit('set_alertid', selectedAlertId);
+    setAlertId(selectedAlertId);
 
     getLocationLink((locationLink, error) => {
       if (error) {
@@ -35,7 +42,7 @@ export default function Join({ setChatVisibility, setSocket }) {
     });
 
     setSocket(socket);
-    setChatVisibility(true);
+    setAwaitVisibility(true);
   };
 
   const getMessageText = (alertId) => {
@@ -86,14 +93,12 @@ export default function Join({ setChatVisibility, setSocket }) {
       </div>
       {selectedAlertId && (
         <div className="user-input">
-          <input
-            type='text'
-            placeholder='Nome de usuário'
-            ref={usernameRef} // Associa o input ao useRef
-          />
-          <button onClick={handleSubmit}>Entrar</button>
+          <button onClick={handleSubmit}>Enviar</button>
         </div>
       )}
+      <button className="icon-button">
+        <img src={ambulanciaIcon} alt="Button Icon" onClick={() => { OpenConnection() }} />
+      </button>
     </div>
   );
 }

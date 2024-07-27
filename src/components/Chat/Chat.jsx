@@ -6,15 +6,16 @@ import violenciaDomesticaSound from '../../sounds/violenciaDomestica.mp3';
 import acidenteSound from '../../sounds/acidente.mp3';
 import './Chat.css'
 
-export default function Chat({ socket }) {
-  const [messageList, setMessageList] = useState([]);
+export default function Chat({ socket, setSocket }) {
+  const [messageList, setMessageList] = useState([]); //Colocar messageList em App, para não perder
+  const [response, setResponse] = useState("Responder")
 
   useEffect(() => {
-    socket.on('receive_message', data => {
-      setMessageList((current) => [...current, data]);
-      playAlertSound(data.alertId);
-    });
-
+        socket.on('receive_message', data => {
+        setMessageList((current) => [...current, data]);
+        playAlertSound(data.alertId);
+        });
+  
     return () => socket.off('receive_message');
   }, [socket]);
 
@@ -50,27 +51,35 @@ export default function Chat({ socket }) {
     }
   };
 
+  const sendResponse = (authorId) => {
+    socket.emit('alert_response', { confirmation: true, authorId });
+    setResponse("Mensagem Enviada");
+    setSocket(socket);
+  }
+
   return (
     <div>
       <h1>Mensagem de Alerta</h1>
       <table>
         <thead>
           <tr>
-            <th>Autor</th>
+            <th>ID do solicitante</th>
             <th>Mensagem</th>
             <th>Localização</th>
+            <th>Responder</th>
           </tr>
         </thead>
         <tbody>
           {messageList.map((message, index) => (
             <tr key={index}>
-              <td>{message.author}</td>
+              <td> {message.authorId}</td>
               <td style={{ whiteSpace: 'pre-line' }}>{getMessageText(message.alertId)}</td>
               <td>
                 <a href={message.location} target="_blank" rel="noopener noreferrer">
                   Ver minha localização no Google Maps
                 </a>
               </td>
+              <td> <a onClick = {() =>{sendResponse(message.authorId)}}>{response}</a></td>
             </tr>
           ))}
         </tbody>
