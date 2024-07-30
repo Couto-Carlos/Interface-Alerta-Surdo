@@ -8,7 +8,6 @@ import './Chat.css'
 
 export default function Chat({ socket, setSocket }) {
   const [messageList, setMessageList] = useState([]); //Colocar messageList em App, para não perder
-  const [response, setResponse] = useState("Responder")
 
   useEffect(() => {
         socket.on('receive_message', data => {
@@ -51,10 +50,14 @@ export default function Chat({ socket, setSocket }) {
     }
   };
 
-  const sendResponse = (authorId) => {
+  const sendResponse = (authorId) => (event) => {
     socket.emit('alert_response', { confirmation: true, authorId });
-    setResponse("Mensagem Enviada");
+    changeText(event);
     setSocket(socket);
+  }
+
+  const changeText = (event) => {
+    event.target.innerText = 'Direcione-se ao local no mapa\n<--';
   }
 
   return (
@@ -79,7 +82,9 @@ export default function Chat({ socket, setSocket }) {
                   Ver minha localização no Google Maps
                 </a>
               </td>
-              <td> <a onClick = {() =>{sendResponse(message.authorId)}}>{response}</a></td>
+              <td> 
+                  <button onClick={sendResponse(message.authorId)}>Responder</button>
+              </td>
             </tr>
           ))}
         </tbody>
